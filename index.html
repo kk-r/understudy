@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Understudy — demonstrate once, the agent writes the tool</title>
+<meta name="description" content="A triage workspace where you demonstrate a routine once and the agent turns it into a reusable WebMCP tool.">
+<link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+
+<header>
+  <h1>Understudy</h1>
+  <span class="tag">Triage Desk</span>
+  <span class="spacer"></span>
+  <span class="stat" id="stat-source"></span>
+  <span class="stat"><b id="stat-matching">0</b> matching</span>
+  <span class="stat"><b id="stat-inbox">0</b> inbox</span>
+  <span class="stat"><b id="stat-done">0</b> triaged</span>
+  <span class="stat" id="stat-webmcp"></span>
+  <span class="stat" id="agent-activity"></span>
+</header>
+
+<main>
+  <section id="work">
+
+    <div class="bar">
+      <span class="label">Filter</span>
+      <select id="f-field"></select>
+      <select id="f-op"></select>
+      <input id="f-value" placeholder="value" size="18">
+      <button id="f-add">Add filter</button>
+      <span class="sep"></span>
+      <span class="label">Sort</span>
+      <select id="s-field"></select>
+      <select id="s-dir"><option value="desc">desc</option><option value="asc">asc</option></select>
+    </div>
+
+    <div class="bar">
+      <span class="label">Active</span>
+      <div class="chips" id="chips"></div>
+      <span class="spacer" style="flex:1"></span>
+      <button id="f-clear">Clear all</button>
+    </div>
+
+    <div class="bar">
+      <span class="label">Act on matching</span>
+      <input id="a-tag" placeholder="tag name" size="12">
+      <button id="a-tag-add">Tag</button>
+      <button id="a-tag-remove">Untag</button>
+      <span class="sep"></span>
+      <span class="label">Priority</span>
+      <button data-priority="high">High</button>
+      <button data-priority="normal">Normal</button>
+      <button data-priority="low">Low</button>
+      <button data-priority="">Clear</button>
+      <span class="sep"></span>
+      <button id="a-promote">Promote</button>
+      <button id="a-dismiss">Dismiss</button>
+      <span class="sep"></span>
+      <button id="a-undo">Undo</button>
+    </div>
+
+    <div id="list"></div>
+  </section>
+
+  <aside>
+    <div class="bar">
+      <button id="tab-trace" class="tab active">Trace</button>
+      <button id="tab-skills" class="tab">Skills <span id="skill-count"></span></button>
+      <span class="spacer" style="flex:1"></span>
+      <button id="rec-toggle" class="primary">Record</button>
+    </div>
+    <div class="bar" id="rec-bar">
+      <span id="rec-state" class="stat"></span>
+      <span class="spacer" style="flex:1"></span>
+      <span class="label">Agent pace</span>
+      <select id="pace">
+        <option value="600">Normal</option>
+        <option value="1100">Slow</option>
+        <option value="0">Instant</option>
+      </select>
+    </div>
+    <div id="agent-run" hidden></div>
+    <div id="pane-trace"><div id="trace"></div></div>
+    <div id="pane-skills" hidden><div id="skills"></div></div>
+  </aside>
+</main>
+
+<script type="module" src="src/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+:root {
+  color-scheme: light dark;
+  --bg:#fbfbfc; --panel:#fff; --fg:#16161a; --mut:#6b6b75; --line:#e2e2e7;
+  --accent:#3b5bdb; --ok:#0a7d32; --warn:#b45309; --bad:#b00020;
+  --hi:#fef3c7; --hi-fg:#78350f;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#0f0f11; --panel:#17171a; --fg:#ececf1; --mut:#8b8b96; --line:#2a2a30;
+          --accent:#748ffc; --ok:#4ade80; --warn:#fbbf24; --bad:#f87171;
+          --hi:#3f2d0a; --hi-fg:#fde68a; }
+}
+* { box-sizing:border-box; }
+html, body { height:100%; }
+body {
+  margin:0; background:var(--bg); color:var(--fg);
+  font:14px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  display:grid; grid-template-rows:auto 1fr; height:100vh; overflow:hidden;
+}
+button, input, select { font:inherit; color:inherit; }
+button {
+  padding:5px 11px; border:1px solid var(--line); border-radius:6px;
+  background:var(--panel); cursor:pointer; white-space:nowrap;
+}
+button:hover:not(:disabled) { border-color:var(--accent); color:var(--accent); }
+button:disabled { opacity:.4; cursor:not-allowed; }
+button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+button.primary:hover:not(:disabled) { color:#fff; filter:brightness(1.08); }
+input, select { padding:5px 8px; border:1px solid var(--line); border-radius:6px; background:var(--panel); }
+input:focus, select:focus { outline:2px solid var(--accent); outline-offset:-1px; }
+
+header {
+  display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+  padding:10px 16px; border-bottom:1px solid var(--line); background:var(--panel);
+}
+header h1 { font-size:15px; margin:0; letter-spacing:-.01em; }
+header .tag { font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--mut); }
+header .spacer { flex:1; }
+header .stat { font-size:12px; color:var(--mut); font-variant-numeric:tabular-nums; }
+header .stat b { color:var(--fg); font-weight:600; }
+
+main { display:grid; grid-template-columns:1fr 340px; overflow:hidden; }
+@media (max-width:900px) { main { grid-template-columns:1fr; } aside { display:none; } }
+
+#work { display:grid; grid-template-rows:auto auto 1fr; overflow:hidden; }
+
+.bar { display:flex; gap:6px; align-items:center; flex-wrap:wrap; padding:8px 16px; border-bottom:1px solid var(--line); }
+.bar .label { font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--mut); margin-right:2px; }
+.bar .sep { width:1px; align-self:stretch; background:var(--line); margin:0 4px; }
+
+.chips { display:flex; gap:6px; flex-wrap:wrap; }
+.chip {
+  display:inline-flex; align-items:center; gap:6px; font-size:12px;
+  padding:3px 6px 3px 9px; border-radius:999px; background:var(--hi); color:var(--hi-fg);
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+.chip button { padding:0 4px; border:0; background:none; line-height:1; font-size:14px; color:inherit; }
+.chip button:hover { color:var(--bad); }
+.chips .empty { font-size:12px; color:var(--mut); font-style:italic; }
+
+#list { overflow:auto; padding:4px 0 40px; }
+.item { display:grid; grid-template-columns:52px 1fr auto; gap:12px; padding:8px 16px; border-bottom:1px solid var(--line); align-items:start; }
+.item.dismissed { opacity:.35; }
+.item .score { text-align:right; font-variant-numeric:tabular-nums; color:var(--mut); font-size:12px; padding-top:2px; }
+.item .score b { display:block; color:var(--fg); font-size:14px; }
+.item .title { font-weight:500; }
+.item .title a { color:inherit; text-decoration:none; }
+.item .title a:hover { color:var(--accent); text-decoration:underline; }
+.item .meta { font-size:12px; color:var(--mut); margin-top:2px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.item .badges { display:flex; gap:4px; flex-wrap:wrap; justify-content:flex-end; max-width:220px; }
+.badge { font-size:11px; padding:1px 7px; border-radius:999px; border:1px solid var(--line); color:var(--mut); }
+.badge.tag { background:var(--hi); color:var(--hi-fg); border-color:transparent; }
+.badge.p-high { color:var(--bad); border-color:currentColor; font-weight:600; }
+.badge.p-normal { color:var(--mut); }
+.badge.p-low { color:var(--mut); opacity:.7; }
+.badge.s-promoted { color:var(--ok); border-color:currentColor; }
+.badge.s-dismissed { color:var(--mut); }
+.empty-state { padding:40px 16px; text-align:center; color:var(--mut); }
+
+aside { border-left:1px solid var(--line); background:var(--panel); display:grid; grid-template-rows:auto 1fr; overflow:hidden; }
+aside h2 { font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--mut); margin:0; }
+#trace { overflow:auto; padding:8px 0 30px; }
+.step { display:grid; grid-template-columns:20px 1fr; gap:8px; padding:5px 14px; font-size:13px; border-left:2px solid transparent; }
+.step .n { color:var(--mut); font-size:11px; font-variant-numeric:tabular-nums; padding-top:2px; }
+.step .what code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; background:var(--hi); color:var(--hi-fg); padding:0 4px; border-radius:3px; }
+.step .eff { color:var(--mut); font-size:11px; }
+.step.recording { border-left-color:var(--bad); background:color-mix(in srgb, var(--bad) 5%, transparent); }
+.rec-dot { width:8px; height:8px; border-radius:50%; background:var(--bad); display:inline-block; animation:pulse 1.4s infinite; }
+@keyframes pulse { 50% { opacity:.25; } }
+.muted { color:var(--mut); }
+.mono { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+
+/* tabs + skills panel */
+button.tab { border:0; background:none; padding:4px 8px; border-radius:5px; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--mut); }
+button.tab.active { background:var(--hi); color:var(--hi-fg); }
+button.tab:hover { color:var(--fg); }
+#pane-trace, #pane-skills { overflow:auto; }
+#skills { padding:10px 12px 40px; display:flex; flex-direction:column; gap:10px; }
+.skill { border:1px solid var(--line); border-radius:8px; padding:10px 12px; }
+.skill.pending { border-color:var(--warn); }
+.skill h3 { margin:0 0 2px; font-size:13px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+.skill .desc { font-size:12px; color:var(--mut); margin-bottom:8px; }
+.skill .param { display:grid; grid-template-columns:auto 1fr; gap:4px 8px; font-size:12px; align-items:center; margin-bottom:4px; }
+.skill .param code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--hi); color:var(--hi-fg); padding:0 4px; border-radius:3px; }
+.skill .param .src { color:var(--mut); font-size:11px; }
+.skill .row { display:flex; gap:6px; align-items:center; margin-top:8px; flex-wrap:wrap; }
+.skill .status { font-size:11px; text-transform:uppercase; letter-spacing:.07em; }
+.skill .status.pending { color:var(--warn); } .skill .status.live { color:var(--ok); }
+.skill select, .skill input { font-size:12px; padding:2px 5px; }
+#agent-activity { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--accent); }
+#rec-bar.on { background:color-mix(in srgb, var(--bad) 8%, transparent); }
+
+/* agent replay, staged so a human can follow what was done on their behalf */
+#agent-run { padding:8px 14px; border-bottom:1px solid var(--line); background:color-mix(in srgb, var(--accent) 8%, transparent); font-size:12px; }
+#agent-run .who { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--accent); }
+#agent-run .doing { margin-top:2px; }
+#agent-run .doing code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--hi); color:var(--hi-fg); padding:0 4px; border-radius:3px; }
+#agent-run .track { display:flex; gap:3px; margin-top:6px; }
+#agent-run .track i { height:3px; flex:1; border-radius:2px; background:var(--line); }
+#agent-run .track i.done { background:var(--accent); }
+#agent-run .track i.now { background:var(--accent); animation:pulse .7s infinite; }
+#agent-run.failed { background:color-mix(in srgb, var(--bad) 10%, transparent); }
+#agent-run.failed .who { color:var(--bad); }
+#list.agent-touched { animation:touch .5s ease-out; }
+@keyframes touch { from { background:color-mix(in srgb, var(--accent) 12%, transparent); } to { background:transparent; } }
+.step:last-child { animation:touch .5s ease-out; }
+
+/* the agent's step, echoed through the controls it corresponds to */
+.echo-focus { outline:2px solid var(--accent); outline-offset:-1px; background:color-mix(in srgb, var(--accent) 8%, var(--panel)); }
+.echo-press { border-color:var(--accent) !important; background:var(--accent) !important; color:#fff !important;
+              box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent); transform:translateY(1px); }
+button { transition:box-shadow .12s, transform .12s, background .12s; }
+
+header .stat a { color:var(--accent); }

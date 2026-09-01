@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WebMCP Spike — Understudy Block 0</title>
+<style>
+  :root { color-scheme: light dark; --bg:#fff; --fg:#111; --mut:#666; --line:#ddd; --ok:#0a7d32; --bad:#b00020; --card:#f7f7f8; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#111; --fg:#eee; --mut:#999; --line:#333; --ok:#4ade80; --bad:#f87171; --card:#1b1b1d; } }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:24px; font:14px/1.5 ui-sans-serif,system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--fg); max-width:900px; }
+  h1 { font-size:18px; margin:0 0 4px; }
+  h2 { font-size:14px; margin:24px 0 8px; text-transform:uppercase; letter-spacing:.06em; color:var(--mut); }
+  .sub { color:var(--mut); margin:0 0 20px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px 14px; margin-bottom:12px; }
+  .kv { display:grid; grid-template-columns:200px 1fr; gap:4px 12px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; }
+  .kv dt { color:var(--mut); }
+  .kv dd { margin:0; word-break:break-all; }
+  .ok { color:var(--ok); } .bad { color:var(--bad); }
+  button { font:inherit; padding:6px 12px; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--fg); cursor:pointer; margin:0 6px 6px 0; }
+  button:hover { border-color:var(--fg); }
+  #log { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; white-space:pre-wrap; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px; height:340px; overflow:auto; }
+  ol { padding-left:20px; } li { margin-bottom:6px; }
+  code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--card); padding:1px 5px; border-radius:4px; }
+</style>
+</head>
+<body>
+<h1>WebMCP Spike — Block 0</h1>
+<p class="sub">Answers S1–S6 before Understudy gets built. Run in ChatGPT desktop's built-in browser <em>and</em> in Chrome 149+ with <code>chrome://flags/#enable-webmcp-testing</code>.</p>
+
+<h2>Environment</h2>
+<div class="card"><dl class="kv" id="env"></dl></div>
+
+<h2>Agent script — paste these in order</h2>
+<div class="card">
+<p class="sub" style="margin:0 0 10px"><strong>Requires GPT-5.6 Sol or Terra — Luna has WebMCP disabled.</strong> Tool names are generated per load and are never printed to this page (devtools console only). Every tool returns a one-time token that appears here only after it is called. An agent that only <em>reads</em> this page cannot
+produce either. Trust a step only if the reported token matches the log.</p>
+<ol>
+  <li><strong>S1 baseline.</strong> "List every site tool available on this page, with exact names." Two tools whose descriptions mention S1/S6 should appear.</li>
+  <li><strong>S1 late.</strong> Wait for the 30s entry in the log, then ask again. Does the tool described as an <em>S1 probe registered 30 seconds after load</em> now appear?</li>
+  <li><strong>S4 mid-turn.</strong> "Call the tool whose description says it registers another tool. Then immediately call the tool it registered, in this same turn, and report the token it returns." A correct token here is the only proof mid-turn pickup works.</li>
+  <li><strong>S3 abort.</strong> Press <em>Abort write tool</em>, then ask the agent to call the S6 write probe. Gone from its list, or present but failing?</li>
+  <li><strong>S5 ceiling.</strong> Press <em>Flood +30</em>, then "How many site tools do you see now? List the last five exact names."</li>
+  <li><strong>S6 hints.</strong> "Call the read-only probe, then the write probe." Any difference in confirmation prompting between them?</li>
+</ol>
+</div>
+
+<h2>Manual controls</h2>
+<div class="card">
+  <button id="b-late">Register late tool now</button>
+  <button id="b-mid">Register midturn tool now</button>
+  <button id="b-abort">Abort write tool</button>
+  <button id="b-flood">Flood +30</button>
+  <button id="b-list">getTools()</button>
+  <button id="b-clear">Clear log</button>
+</div>
+
+<h2>Log</h2>
+<div id="log"></div>
+
+<script type="module">
+const logEl = document.getElementById('log');
+const t0 = Date.now();
+const log = (msg, cls = '') => {
+  const ms = String(Date.now() - t0).padStart(6, ' ');
+  const line = document.createElement('div');
+  if (cls) line.className = cls;
+  line.textContent = `[${ms}ms] ${msg}`;
+  logEl.appendChild(line);
+  logEl.scrollTop = logEl.scrollHeight;
+};
+
+// --- feature detection ---------------------------------------------------
+const surface = document.modelContext ? 'document.modelContext'
+              : navigator.modelContext ? 'navigator.modelContext'
+              : null;
+const mc = document.modelContext ?? navigator.modelContext ?? null;
+
+const env = document.getElementById('env');
+const row = (k, v, cls = '') => {
+  env.insertAdjacentHTML('beforeend', `<dt>${k}</dt><dd class="${cls}">${v}</dd>`);
+};
+row('API surface', surface ?? 'NONE — WebMCP unavailable', surface ? 'ok' : 'bad');
+row('document.modelContext', document.modelContext ? 'present' : 'absent');
+row('navigator.modelContext', navigator.modelContext ? 'present' : 'absent');
+row('registerTool', typeof mc?.registerTool === 'function' ? 'function' : 'missing', mc?.registerTool ? 'ok' : 'bad');
+row('getTools', typeof mc?.getTools === 'function' ? 'function' : 'missing');
+row('executeTool', typeof mc?.executeTool === 'function' ? 'function' : 'missing');
+row('toolchange event', typeof mc?.addEventListener === 'function' ? 'addEventListener present' : 'missing');
+row('secure context', String(window.isSecureContext));
+row('origin', location.origin);
+row('userAgent', navigator.userAgent);
+
+if (!mc) {
+  log('WebMCP not available. Chrome: enable chrome://flags/#enable-webmcp-testing and relaunch. ChatGPT: needs desktop app, GPT-5.6 Sol or Terra (Luna has it off), non-Enterprise/Edu workspace.', 'bad');
+}
+
+// --- toolchange (attached FIRST so load-time registrations are observed too) ---
+try {
+  mc?.addEventListener?.('toolchange', async () => {
+    let n = '?';
+    try { n = (await mc.getTools()).length; } catch {}
+    log(`EVENT toolchange fired (registry now ${n})`);
+  });
+} catch (e) { log(`toolchange listener failed: ${e.message}`, 'bad'); }
+
+// --- anti-spoofing --------------------------------------------------------
+// Tool names are generated per load and call tokens are minted at execute time,
+// so neither appears in the static HTML. An agent that merely fetched this page
+// can name nothing and report no token.
+const rand = () => Math.random().toString(36).slice(2, 8);
+const NONCE = rand();
+const N = (base) => `${base}_${NONCE}`;
+console.log('[spike] run nonce:', NONCE);
+row('run nonce', 'in console only (names are not printed to the page)');
+
+// --- helpers -------------------------------------------------------------
+const EMPTY_SCHEMA = { type: 'object', properties: {}, required: [] };
+const text = (s) => ({ content: [{ type: 'text', text: s }] });
+
+/** Mints a fresh token, logs it only after the call, and returns it to the agent. */
+const token = (label, note = '') => {
+  const t = rand();
+  console.log('[spike] called', label, '-> token', t);
+  log(`CALLED ${label.replace(NONCE, '…')} -> token ${t}${note ? ' — ' + note : ''}`, 'ok');
+  return text(`token=${t}${note ? ' (' + note + ')' : ''}`);
+};
+
+// The DOM never carries a tool name. An agent reading this page therefore cannot
+// report one; only an agent that actually enumerated the registry can. Real names
+// go to the devtools console for the human running the spike.
+async function reg(def, opts, role) {
+  if (!mc) return null;
+  try {
+    await mc.registerTool(def, opts);
+    console.log('[spike] registered', def.name);
+    log(`registered: ${role}${def.annotations?.readOnlyHint ? ' (readOnlyHint)' : ''}`, 'ok');
+    return def.name;
+  } catch (e) {
+    console.error('[spike] register failed', def.name, e);
+    log(`FAILED to register ${role}: ${e.name}: ${e.message}`, 'bad');
+    return null;
+  }
+}
+
+// --- S1 / S6: baseline pair at load -------------------------------------
+const writeCtl = new AbortController();
+
+await reg({
+  name: N('probe_read'),
+  description: 'S1/S6 probe. Read-only (readOnlyHint:true). Returns a one-time token.',
+  inputSchema: EMPTY_SCHEMA,
+  annotations: { readOnlyHint: true },
+  execute: async () => token(N('probe_read'), 'readOnlyHint:true'),
+}, undefined, 'read probe');
+
+await reg({
+  name: N('probe_write'),
+  description: 'S6/S3 probe. Declares a side effect (readOnlyHint:false). Returns a one-time token.',
+  inputSchema: EMPTY_SCHEMA,
+  annotations: { readOnlyHint: false },
+  execute: async () => token(N('probe_write'), 'readOnlyHint:false'),
+}, { signal: writeCtl.signal }, 'write probe');
+
+// --- S4: a tool that registers another tool ------------------------------
+let midRegistered = false;
+async function registerMidturn() {
+  if (midRegistered) { log('midturn probe already registered'); return; }
+  midRegistered = true;
+  await reg({
+    name: N('probe_midturn'),
+    description: 'S4 probe. Registered at runtime. Calling this in the same turn as the tool that created it proves mid-turn pickup works.',
+    inputSchema: EMPTY_SCHEMA,
+    annotations: { readOnlyHint: true },
+    execute: async () => token(N('probe_midturn'), 'MID-TURN PICKUP WORKS'),
+  }, undefined, 'midturn probe');
+}
+
+await reg({
+  name: N('add_tool'),
+  description: 'S4 probe. Registers a brand new tool at runtime and tells you its name. After calling this, try calling that new tool in the same turn.',
+  inputSchema: EMPTY_SCHEMA,
+  execute: async () => {
+    log(`CALLED ${N('add_tool')} — registering ${N('probe_midturn')}`);
+    await registerMidturn();
+    return text(`Registered a new tool named "${N('probe_midturn')}". Call it now, in this same turn, and report the token it returns.`);
+  },
+}, undefined, 'add-tool probe');
+
+// --- S1: late timer registration -----------------------------------------
+let lateRegistered = false;
+async function registerLate() {
+  if (lateRegistered) { log('late probe already registered'); return; }
+  lateRegistered = true;
+  await reg({
+    name: N('probe_late'),
+    description: 'S1 probe. Registered 30 seconds after page load, with no user or agent action.',
+    inputSchema: EMPTY_SCHEMA,
+    annotations: { readOnlyHint: true },
+    execute: async () => token(N('probe_late'), 'LATE REGISTRATION VISIBLE'),
+  }, undefined, 'late probe');
+}
+setTimeout(() => { log('--- 30s elapsed, registering the late probe ---'); registerLate(); }, 30000);
+
+// --- S5: flood -----------------------------------------------------------
+let floodCount = 0;
+async function flood(n = 30) {
+  for (let i = 0; i < n; i++) {
+    const idx = String(floodCount++).padStart(2, '0');
+    await reg({
+      name: N(`bulk_${idx}`),
+      description: `S5 probe #${idx}. Filler tool for measuring the tool-count ceiling.`,
+      inputSchema: EMPTY_SCHEMA,
+      annotations: { readOnlyHint: true },
+      execute: async () => token(N(`bulk_${idx}`)),
+    }, undefined, `bulk filler #${idx}`);
+  }
+  log(`flood complete — ${floodCount} bulk tools registered`);
+}
+
+// --- manual controls -----------------------------------------------------
+document.getElementById('b-late').onclick = registerLate;
+document.getElementById('b-mid').onclick = registerMidturn;
+document.getElementById('b-flood').onclick = () => flood(30);
+document.getElementById('b-clear').onclick = () => { logEl.textContent = ''; };
+document.getElementById('b-abort').onclick = () => {
+  writeCtl.abort();
+  log('aborted controller for the write probe');
+};
+document.getElementById('b-list').onclick = async () => {
+  if (!mc?.getTools) { log('getTools unavailable', 'bad'); return; }
+  try {
+    const tools = await mc.getTools();
+    console.log(`[spike] getTools() -> ${tools.length}:`, tools.map(t => t.name));
+    log(`getTools() -> ${tools.length} tools (names in devtools console, not on the page)`);
+  } catch (e) { log(`getTools failed: ${e.name}: ${e.message}`, 'bad'); }
+};
+
+log(`spike ready — surface: ${surface ?? 'NONE'}`);
+</script>
+</body>
+</html>
