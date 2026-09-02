@@ -43,7 +43,11 @@ body.panel-open main { grid-template-columns:1fr 340px; }
 body:not(.panel-open) aside { display:none; }
 @media (max-width:900px) { main { grid-template-columns:1fr; } aside { display:none; } }
 
-#work { display:grid; grid-template-rows:auto auto 1fr; overflow:hidden; }
+/* Flex column, not a fixed row template: this has three control bars and a list, and
+   a grid template that miscounts hands a spare 1fr to a row of buttons. Any bar added
+   later just works. */
+#work { display:flex; flex-direction:column; overflow:hidden; min-height:0; }
+#work > .bar { flex:0 0 auto; }
 
 .bar { display:flex; gap:6px 6px; align-items:center; flex-wrap:wrap; padding:8px 16px; border-bottom:1px solid var(--line); }
 .bar > select, .bar > input { min-width:0; }
@@ -60,7 +64,7 @@ body:not(.panel-open) aside { display:none; }
   .bar .sep { display:none; }
 }
 .bar .label { font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--mut); margin-right:2px; }
-.bar .sep { width:1px; align-self:stretch; background:var(--line); margin:0 4px; }
+.bar .sep { width:1px; height:20px; flex:0 0 auto; background:var(--line); margin:0 4px; }
 
 .chips { display:flex; gap:6px; flex-wrap:wrap; }
 .chip {
@@ -72,7 +76,7 @@ body:not(.panel-open) aside { display:none; }
 .chip button:hover { color:var(--bad); }
 .chips .empty { font-size:12px; color:var(--mut); font-style:italic; }
 
-#list { overflow:auto; padding:4px 0 40px; }
+#list { flex:1 1 auto; overflow:auto; min-height:0; padding:4px 0 40px; }
 .item { display:grid; grid-template-columns:52px 1fr auto; gap:12px; padding:8px 16px; border-bottom:1px solid var(--line); align-items:start; }
 .item.dismissed { opacity:.35; }
 .item .score { text-align:right; font-variant-numeric:tabular-nums; color:var(--mut); font-size:12px; padding-top:2px; }
