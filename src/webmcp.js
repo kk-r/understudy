@@ -41,7 +41,8 @@ export async function install(skills, onEvent = () => {}) {
       name: 'get_recording',
       description:
         'Read back what the user taught you: a plain-language list of what they did, plus, for each step, the exact fields you may turn into parameters. ' +
-        'Use this to decide which values are parameters before calling save_skill. Defaults to the most recent recording.',
+        'Each field is marked kind:"content" (a value the user typed or picked -- bind these) or kind:"structural" (the shape of the command -- leave these alone). ' +
+        'Read the guidance field. Use this before calling save_skill. Defaults to the most recent recording.',
       inputSchema: { type: 'object', properties: { recordingId: str('Recording id. Omit for the most recent.') }, required: [] },
       annotations: { readOnlyHint: true },
       execute: async ({ recordingId } = {}) => announce('get_recording', skills.describeRecording(recordingId)),
@@ -51,6 +52,7 @@ export async function install(skills, onEvent = () => {}) {
       description:
         'Turn a recording into a reusable, parameterised skill. You do NOT supply the steps -- they come from the recording exactly as the user performed them. ' +
         'You supply a name, a description, and which fields in which steps become parameters. ' +
+        'Bind every kind:"content" field from get_recording unless the user said it should stay fixed -- missing one means the skill is stuck with a value the user only chose as an example. ' +
         'Each parameter needs: name, stepIndex, fieldPath (both from get_recording), type, and description. ' +
         'The skill is created unapproved; the user reviews the parameters in the Skills panel before it can run.',
       inputSchema: {

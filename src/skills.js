@@ -29,8 +29,8 @@ export function createSkills(bus) {
   // Steps are applied one at a time with the current step announced, so the human can
   // follow what was done on their behalf. 0 disables it. Total pacing is capped so a
   // long skill never stalls a tool call.
-  let paceMs = 1100;
-  const PACE_BUDGET_MS = 4000;
+  let paceMs = 520;
+  const PACE_BUDGET_MS = 2400;
   const progress = new Set();
 
   const notify = () => listeners.forEach((fn) => fn());
@@ -86,10 +86,20 @@ export function createSkills(bus) {
       ok: true,
       recordingId: rec.id,
       demonstration: rec.steps.map((s, i) => `${i}. ${describePlain(s)}${s.affected ? ` (${s.affected} items affected)` : ''}`).join('\n'),
+      guidance:
+        'Bind every field marked kind:"content" as a parameter unless the user has said it should stay fixed -- ' +
+        'those are the values they typed or picked, and they are what changes between runs. ' +
+        'Leave kind:"structural" fields alone: they describe the shape of the command, not the case being handled. ' +
+        'Give each parameter a short lowercase name that says what it means to the user, not the field it came from.',
       steps: rec.steps.map((s, i) => ({
         stepIndex: i,
         command: s.type,
-        bindableFields: bindablePaths(s).map((b) => ({ fieldPath: b.path, currentValue: b.value, type: b.type })),
+        bindableFields: bindablePaths(s).map((b) => ({
+          fieldPath: b.path,
+          currentValue: b.value,
+          type: b.type,
+          kind: b.kind,
+        })),
       })),
     };
   }

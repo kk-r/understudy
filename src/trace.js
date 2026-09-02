@@ -30,9 +30,19 @@ export function describePlain(entry) {
   return fn ? fn(entry.payload ?? {}, (s) => `"${s}"`) : `${entry.type} ${JSON.stringify(entry.payload ?? {})}`;
 }
 
+// Fields the user typed or picked as content, as opposed to structural choices about
+// how the command is shaped. The page knows which is which; the agent was previously
+// left to guess, and guessed inconsistently.
+const CONTENT_FIELDS = new Set(['value', 'tag', 'level']);
+
 /** Every value in a command that could plausibly become a parameter, with its path. */
 export function bindablePaths(entry) {
   return Object.entries(entry.payload ?? {})
     .filter(([, v]) => v !== null && typeof v !== 'object')
-    .map(([k, v]) => ({ path: k, value: v, type: typeof v === 'number' ? 'number' : 'string' }));
+    .map(([k, v]) => ({
+      path: k,
+      value: v,
+      type: typeof v === 'number' ? 'number' : 'string',
+      kind: CONTENT_FIELDS.has(k) ? 'content' : 'structural',
+    }));
 }

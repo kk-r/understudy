@@ -13,14 +13,14 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function type(el, value, budget) {
   if (!el) return;
   const s = String(value);
-  const per = Math.max(12, Math.min(45, budget / Math.max(s.length, 1)));
+  const per = Math.max(8, Math.min(26, budget / Math.max(s.length, 1)));
   el.value = '';
   el.classList.add('echo-focus');
   for (const ch of s) { el.value += ch; await sleep(per); }
   el.classList.remove('echo-focus');
 }
 
-async function press(el, hold = 260) {
+async function press(el, hold = 170) {
   if (!el) return;
   el.classList.add('echo-press');
   await sleep(hold);
@@ -37,7 +37,7 @@ function unset(...els) { for (const el of els) el?.classList.remove('echo-focus'
  */
 export async function echo(cmd, budget = 600) {
   const p = cmd.payload ?? {};
-  const typeBudget = budget * 0.55;
+  const typeBudget = budget * 0.5;
 
   switch (cmd.type) {
     case 'SET_FILTER': {
@@ -54,7 +54,7 @@ export async function echo(cmd, budget = 600) {
     case 'REMOVE_FILTER':  return press(document.querySelector('#chips .chip button'));
     case 'SET_SORT': {
       set($('s-field'), p.field); set($('s-dir'), p.dir);
-      await sleep(Math.min(320, budget));
+      await sleep(Math.min(200, budget));
       unset($('s-field'), $('s-dir'));
       return;
     }
