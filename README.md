@@ -179,6 +179,17 @@ falls back to the snapshot if the API is unreachable.
 High-yield topics in the snapshot, for anyone reproducing the demo: `google` (63),
 `apple` (32), `openai` (20), `github` (19), `firefox` (19).
 
+## Without a WebMCP client
+
+Turning a recording into a skill is the agent's job — it reads the demonstration and
+decides which values are parameters. But the app stays coherent without one: a finished
+recording is shown in the Skills panel with everything it captured, and **Create it
+myself instead** builds the skill with no parameters, after which you promote the values
+you want using the same control the agent's choices are edited with.
+
+So a visitor with no WebMCP client still sees the whole loop. They just do the part the
+agent would have done.
+
 ## Not implemented
 
 Tracked honestly here as the build proceeds.

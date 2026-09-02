@@ -166,12 +166,42 @@ function renderRec() {
 
 function renderSkills() {
   const list = skills.listSkills();
+  const pending = skills.listUnlearnedRecordings();
   $('skill-count').textContent = list.length ? `(${list.length})` : '';
-  if (list.length === 0) {
+  if (list.length === 0 && pending.length === 0) {
     $('skills').innerHTML = '<div class="empty-state">No skills yet.<br><br>Press <b>Record</b>, do a routine by hand, press <b>Stop</b>, then ask the agent to learn it.</div>';
     return;
   }
-  $('skills').replaceChildren(...list.map(renderSkillCard));
+  $('skills').replaceChildren(...pending.map(renderRecordingCard), ...list.map(renderSkillCard));
+}
+
+/**
+ * A recording is not yet a skill. Turning one into a skill is the agent's job --
+ * it reads the demonstration and decides which values are parameters. But the app
+ * has to stay coherent for someone without a WebMCP client, so the recording is
+ * shown with what it captured and a manual path: create it with no parameters,
+ * then promote the values you want using the same control the agent's choices use.
+ */
+function renderRecordingCard(rec) {
+  const el = document.createElement('div');
+  el.className = 'rec';
+  el.innerHTML = `
+    <h3>Recorded demonstration &middot; ${rec.steps.length} step${rec.steps.length === 1 ? '' : 's'}</h3>
+    <ol>${rec.steps.map((st) => `<li>${describe(st)}${st.affected ? ` <span class="muted">(${st.affected})</span>` : ''}</li>`).join('')}</ol>
+    <div class="ask">Ask your agent: <b>&ldquo;Look at what I just did and turn it into a reusable skill.&rdquo;</b></div>
+    <div class="row"><button data-make>Create it myself instead</button></div>`;
+  el.querySelector('[data-make]').onclick = () => {
+    const name = prompt('Skill name (lowercase letters, digits, underscores)', 'my_routine');
+    if (!name) return;
+    const res = skills.saveSkill({
+      recordingId: rec.id, name,
+      description: `${rec.steps.length}-step routine demonstrated by hand.`,
+      params: [],
+    });
+    if (!res.ok) flash(res.reason);
+    else flash('Created with no parameters — promote the values you want below.');
+  };
+  return el;
 }
 
 function renderSkillCard(skill) {

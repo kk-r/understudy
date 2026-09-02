@@ -211,6 +211,12 @@ export function createSkills(bus) {
     activeId: () => active?.id ?? null,
     recordedSoFar: () => (active ? bus.getLog().length - active.startIndex : 0),
     listSkills: () => [...skills.values()],
+    /** Recordings no skill has been built from yet. */
+    listUnlearnedRecordings: () => {
+      const used = new Set([...skills.values()].map((s) => s.recordingId));
+      return [...recordings.values()].filter((r) => !used.has(r.id)).reverse();
+    },
+    stepsOf: (id) => (recordings.get(id)?.steps ?? []),
     getSkill: (n) => skills.get(n),
     subscribe: (fn) => { listeners.add(fn); return () => listeners.delete(fn); },
   };
