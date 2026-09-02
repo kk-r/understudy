@@ -9,6 +9,24 @@ it registers into the live page at runtime.
 
 Status: **work in progress.** See "Build sequence" below for what is done.
 
+## Try it
+
+**<https://understudy-wine.vercel.app>**
+
+Open it in ChatGPT desktop's built-in browser (GPT-5.6 Sol or Terra — Luna has WebMCP
+disabled), or Chrome 149+ with `chrome://flags/#enable-webmcp-testing`. The header should
+read `WebMCP: 6 tools`.
+
+1. Press **Teach**. Filter `title contains amazon` — 14 matches. Tag them `big-tech`,
+   set priority High. Press **Done**.
+2. Ask the agent: *"Look at what I just did and turn it into a reusable skill."*
+3. Review the parameters it chose. Unbind any that should stay fixed. **Approve**.
+4. Ask it: *"Now do the same for every other big tech company."* It enumerates them
+   itself and runs your tool once per company.
+
+The client probe that produced the findings below is at
+<https://understudy-wine.vercel.app/spike.html>.
+
 ## Why this needs WebMCP
 
 The demonstration is the human's actions inside a live application session. That
@@ -66,41 +84,6 @@ Driving the actual DOM controls instead would recouple replay to the DOM, which 
 the brittleness the command bus exists to avoid. The command stays the source of truth; the UI
 just shows its work.
 
-## Live
-
-**https://understudy-wine.vercel.app** — and the client probe at **https://understudy-wine.vercel.app/spike.html**
-
-## Running it locally
-
-No build step, no dependencies. Plain ES modules.
-
-```
-python3 -m http.server 8777
-```
-
-Then open <http://localhost:8777/>.
-
-To exercise the WebMCP tools you need one of:
-
-- **Chrome 149+** with `chrome://flags/#enable-webmcp-testing` enabled, then relaunch.
-  If `document.modelContext` is still undefined, launch with `--enable-features=WebMCPTesting`.
-- **ChatGPT desktop app**, built-in browser. Requires GPT-5.6 Sol or Terra
-  (Luna has WebMCP disabled) and a non-Enterprise, non-Edu workspace. The in-app
-  browser may not reach `localhost`, so use a tunnel or a deployed URL.
-
-## Client compatibility
-
-Targets the intersection of the two shipping clients:
-
-- Imperative registration only. The declarative HTML form API is **not supported**
-  in ChatGPT's browser.
-- Top-level document only. Tools registered inside iframes are **not discovered**
-  by ChatGPT's browser, same-origin or cross-origin.
-- Feature-detected as `document.modelContext ?? navigator.modelContext`.
-  The spec and both clients use `document.modelContext`; `navigator.modelContext`
-  was the Chrome 146–149 spelling and is deprecated as of Chrome 150.
-- Single document, no router. Tools do not survive navigation.
-
 ## What I measured about the two clients
 
 `spike.html` probes six unknowns that neither Chrome's nor OpenAI's documentation
@@ -157,6 +140,61 @@ out of the DOM entirely (devtools console only), and has every tool mint a one-t
 token at execute time. A reported token that matches the log is the only proof a
 call happened.
 
+## Using it
+
+**Teach** in the header, or just tell your agent to start recording. Do the routine by
+hand — the header turns red while it captures. Press **Done**, then ask the agent to turn
+it into a skill. Review the parameters it chose, approve, and it runs.
+
+**The page captures the demonstration, not the agent.** Nothing streams to the model
+while you work: the agent reads a transcript afterwards via `get_recording`. That is why
+it costs no tokens while you demonstrate, why it is deterministic, and why it works
+whether the agent is idle, busy, or absent entirely.
+
+**The side panel** is collapsed by default and toggled from the header. It opens itself
+whenever there is something in it worth seeing — a demonstration being captured, a skill
+awaiting approval, an agent mid-run — so nothing important happens behind a closed door.
+
+**Without a WebMCP client**, turning a recording into a skill is still possible: a finished
+demonstration appears in the Skills panel and **Create it myself instead** builds the skill
+with no parameters, after which you promote the values you want using the same control the
+agent's choices are edited with. You do the part the agent would have done.
+
+**To start over**, append `?reset` to the URL — it wipes every skill and recording before
+the page loads, then strips itself from the address bar. There is also **Clear all skills**
+at the foot of the panel, and **Delete** on each card.
+
+## Client compatibility
+
+Targets the intersection of the two shipping clients:
+
+- Imperative registration only. The declarative HTML form API is **not supported**
+  in ChatGPT's browser.
+- Top-level document only. Tools registered inside iframes are **not discovered**
+  by ChatGPT's browser, same-origin or cross-origin.
+- Feature-detected as `document.modelContext ?? navigator.modelContext`.
+  The spec and both clients use `document.modelContext`; `navigator.modelContext`
+  was the Chrome 146–149 spelling and is deprecated as of Chrome 150.
+- Single document, no router. Tools do not survive navigation.
+
+## Running it locally
+
+No build step, no dependencies. Plain ES modules.
+
+```
+python3 -m http.server 8777
+```
+
+Then open <http://localhost:8777/>.
+
+To exercise the WebMCP tools you need one of:
+
+- **Chrome 149+** with `chrome://flags/#enable-webmcp-testing` enabled, then relaunch.
+  If `document.modelContext` is still undefined, launch with `--enable-features=WebMCPTesting`.
+- **ChatGPT desktop app**, built-in browser. Requires GPT-5.6 Sol or Terra
+  (Luna has WebMCP disabled) and a non-Enterprise, non-Edu workspace. The in-app
+  browser may not reach `localhost`, so use a tunnel or a deployed URL.
+
 ## Data
 
 1000 real Hacker News stories, public, no key and no login.
@@ -180,46 +218,6 @@ of the category and let it enumerate them itself:
   instagram 3 (54 items across 6)
 
 Retail brands are not in a Hacker News corpus; pick a category the data actually has.
-
-## The side panel
-
-Collapsed by default — the workspace is the product, the panel is what you consult.
-**Panel** in the header toggles it.
-
-It opens itself whenever there is something in it worth seeing: a demonstration being
-captured, a skill waiting for approval, an agent mid-run. Nothing important happens
-behind a closed door, which is what makes collapsing it safe rather than merely tidy.
-
-## Clearing what it has learned
-
-Skills persist in `localStorage`, so they survive a reload. To start over:
-
-- **`?reset`** — append it to the URL. Wipes every learned skill and recording before the
-  page loads, then strips itself from the address bar. This is the one to use for repeated
-  demo runs; embedded browsers have no devtools console to clear storage by hand.
-- **Clear all skills** — at the foot of the Skills panel. Two clicks, same as Delete.
-- **Delete** — on an individual skill card.
-
-## Teaching, precisely
-
-The **page** captures the demonstration, not the agent. Nothing streams to the model
-while you work: you press Teach (or ask your agent to start), do the routine, press
-Done, and only then does the agent read a transcript via `get_recording`.
-
-That is a feature, not a shortcut. It costs no tokens while you demonstrate, it is
-deterministic, and it works identically whether the agent is idle, busy, or absent
-entirely — which is what makes the no-agent path below possible.
-
-## Without a WebMCP client
-
-Turning a recording into a skill is the agent's job — it reads the demonstration and
-decides which values are parameters. But the app stays coherent without one: a finished
-recording is shown in the Skills panel with everything it captured, and **Create it
-myself instead** builds the skill with no parameters, after which you promote the values
-you want using the same control the agent's choices are edited with.
-
-So a visitor with no WebMCP client still sees the whole loop. They just do the part the
-agent would have done.
 
 ## Not implemented
 
