@@ -163,6 +163,8 @@ $('rec-toggle').onclick = () => {
 
 function renderRec() {
   const on = skills.isRecording();
+  document.body.classList.toggle('teaching', on);
+  $('teaching-pill').hidden = !on;
   $('rec-toggle').textContent = on ? 'Done' : 'Teach';
   $('rec-toggle').className = on ? '' : 'primary';
   $('rec-bar').className = on ? 'bar on' : 'bar';
@@ -205,7 +207,10 @@ function ask(anchor, { label, value = '', size = 14 }) {
 function renderSkills() {
   const list = skills.listSkills();
   const pending = skills.listUnlearnedRecordings();
-  $('skill-count').textContent = list.length ? `(${list.length})` : '';
+  const awaiting = list.filter((s) => !s.approved).length;
+  $('skill-count').textContent = awaiting ? `(${awaiting} to approve)` : list.length ? `(${list.length})` : '';
+  $('skill-count').className = awaiting ? 'pending' : '';
+  $('tab-skills').classList.toggle('nudge', awaiting > 0 && $('pane-skills').hidden);
   if (list.length === 0 && pending.length === 0) {
     $('skills').innerHTML = '<div class="empty-state">No skills yet.<br><br>Press <b>Teach</b>, do a routine by hand, press <b>Done</b>, then ask your agent to learn it.</div>';
     return;
@@ -356,14 +361,24 @@ function renderSkillCard(skill) {
 
 // --- tabs -----------------------------------------------------------------
 
-for (const [tab, pane] of [['tab-trace', 'pane-trace'], ['tab-skills', 'pane-skills']]) {
-  $(tab).onclick = () => {
-    for (const [t, p] of [['tab-trace', 'pane-trace'], ['tab-skills', 'pane-skills']]) {
-      $(t).classList.toggle('active', t === tab);
-      $(p).hidden = p !== pane;
-    }
-  };
+const TABS = [['tab-trace', 'pane-trace'], ['tab-skills', 'pane-skills']];
+function showTab(tab) {
+  for (const [t, p] of TABS) {
+    $(t).classList.toggle('active', t === tab);
+    $(p).hidden = p !== tab.replace('tab-', 'pane-');
+  }
+  renderSkills();
 }
+for (const [tab] of TABS) $(tab).onclick = () => showTab(tab);
+
+// A skill the agent just wrote lands in a panel you may not be looking at, so the
+// agent announces success and the screen does nothing. Surface it instead.
+let lastAwaiting = 0;
+skills.subscribe(() => {
+  const awaiting = skills.listSkills().filter((s) => !s.approved).length;
+  if (awaiting > lastAwaiting) showTab('tab-skills');
+  lastAwaiting = awaiting;
+});
 
 // --- agent replay ---------------------------------------------------------
 

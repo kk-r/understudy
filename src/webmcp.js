@@ -83,6 +83,10 @@ export async function install(skills, onEvent = () => {}) {
         // taken at the start of the turn, so a tool registered now is not in it and
         // the first call against it fails until the registry refreshes. run_skill was
         // registered at load, is always in the snapshot, and never goes stale.
+        if (res.ok) res.tellTheUser =
+          'The skill is saved but cannot run until the user approves it. Tell them it is waiting in the ' +
+          'Skills panel, say which parameters you chose and why, and mention they can add or remove ' +
+          'parameters before approving.';
         if (res.ok) res.howToRun = `Once the user approves it, run this with run_skill(name: "${res.name}"). ` +
           `It is also registered as a tool called "${res.name}", but your tool list may be a snapshot from the start of this turn — ` +
           `calling it directly may fail until that refreshes. run_skill always works.`;
