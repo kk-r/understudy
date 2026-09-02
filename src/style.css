@@ -145,3 +145,5 @@ header .stat a { color:var(--accent); }
 .ask-inline { display:inline-flex; gap:4px; align-items:center; }
 .ask-inline input { font-size:12px; padding:3px 6px; }
 .ask-inline button { padding:3px 8px; font-size:12px; }
+
+button.danger { border-color:var(--bad) !important; background:var(--bad) !important; color:#fff !important; }

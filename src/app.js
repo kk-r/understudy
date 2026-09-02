@@ -292,12 +292,33 @@ function renderSkillCard(skill) {
   });
   el.querySelector('[data-act="approve"]')?.addEventListener('click', () => skills.approveSkill(skill.name, true));
   el.querySelector('[data-act="revoke"]')?.addEventListener('click', () => skills.approveSkill(skill.name, false));
+  // Two-click confirm rather than confirm(), which embedded browsers no-op. The arm
+  // window is deliberately long: this is a control you are meant to stop and think
+  // about, and a short timeout makes the second click silently re-arm instead of
+  // deleting, so the button looks broken.
   const del = el.querySelector('[data-act="delete"]');
+  let armTimer;
+  const disarm = () => {
+    clearTimeout(armTimer);
+    document.removeEventListener('click', outside, true);
+    if (!del.isConnected) return;
+    delete del.dataset.armed;
+    del.classList.remove('danger');
+    del.textContent = 'Delete';
+  };
+  function outside(e) { if (e.target !== del) disarm(); }
   del.onclick = () => {
-    if (del.dataset.armed) { skills.deleteSkill(skill.name); return; }
+    if (del.dataset.armed) {
+      disarm();
+      const res = skills.deleteSkill(skill.name);
+      if (!res.ok) flash(res.reason);
+      return;
+    }
     del.dataset.armed = '1';
-    del.textContent = 'Sure?';
-    setTimeout(() => { if (del.isConnected) { delete del.dataset.armed; del.textContent = 'Delete'; } }, 3000);
+    del.classList.add('danger');
+    del.textContent = 'Delete for good?';
+    armTimer = setTimeout(disarm, 8000);
+    setTimeout(() => document.addEventListener('click', outside, true), 0);
   };
   return el;
 }
