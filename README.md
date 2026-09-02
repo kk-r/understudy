@@ -20,7 +20,7 @@ Every other WebMCP implementation treats `registerTool` as page setup. Here it i
 the product: the tool surface stops being something the developer ships and becomes
 something the user grows.
 
-## Four design decisions
+## Six design decisions
 
 **D1 — Commands operate on sets, not on items.**
 `SELECT_ITEMS {ids:[3,7,12]}` cannot generalise. `SET_FILTER {contains:"diffusion"}`
@@ -42,7 +42,12 @@ Six fixed tools work in every client with zero unknowns. Per-skill `registerTool
 is layered on top, so the demo survives a client that does not honour mid-session
 registration.
 
-**D4a — Agent replay is staged; user actions are not.**
+**D4 — Replay returns ground truth.**
+Every command returns how many items it actually affected, and a step that matches
+nothing returns a structured reason rather than a silent success. The agent replans
+instead of reporting a job well done.
+
+**D5 — Agent replay is staged; user actions are not.**
 An agent rewriting a workspace a human is watching should not apply everything at once — the
 human learns nothing from 250 rows changing simultaneously. Skill replay applies one step at a
 time and announces each one; the human's own clicks go straight through `dispatch` and stay
@@ -50,7 +55,7 @@ instant. Pacing is capped at four seconds in total so a long skill never stalls 
 There is no speed control in the interface: a dropdown beside a live agent run reads as
 a setting you are meant to think about, and it isn't one.
 
-**D4b — The controls echo the command.**
+**D6 — The controls echo the command.**
 Replay dispatches to the bus, so without help the workspace changes while the controls sit
 inert and the agent's work looks like magic. `src/echo.js` renders each step back through the
 controls it corresponds to: fills the selects, types the value character by character, flashes
@@ -60,11 +65,6 @@ and assigning `.value` fires no events, so the real handlers never run.
 Driving the actual DOM controls instead would recouple replay to the DOM, which is precisely
 the brittleness the command bus exists to avoid. The command stays the source of truth; the UI
 just shows its work.
-
-**D4 — Replay returns ground truth.**
-Every command returns how many items it actually affected, and a step that matches
-nothing returns a structured reason rather than a silent success. The agent replans
-instead of reporting a job well done.
 
 ## Live
 
@@ -101,7 +101,7 @@ Targets the intersection of the two shipping clients:
   was the Chrome 146–149 spelling and is deprecated as of Chrome 150.
 - Single document, no router. Tools do not survive navigation.
 
-## Block 0 — spike results
+## What I measured about the two clients
 
 `spike.html` probes six unknowns that neither Chrome's nor OpenAI's documentation
 answers. Run it in both clients before relying on any of this.
@@ -156,21 +156,6 @@ page is not evidence: the spike therefore generates tool names per load, keeps t
 out of the DOM entirely (devtools console only), and has every tool mint a one-time
 token at execute time. A reported token that matches the log is the only proof a
 call happened.
-
-## Build sequence
-
-- [x] **Block 0** — spike page (`spike.html`). *Results not yet filled in — needs a human to run it in both clients.*
-- [x] **Block 1** — host app + command bus (`src/commands.js`, `src/app.js`, `src/data.js`)
-- [x] **Block 2** — trace rendering + recorder (`src/trace.js`, `src/skills.js`)
-- [x] **Block 3** — static tool surface, six meta-tools (`src/webmcp.js`)
-- [x] **Block 4** — `save_skill` + bindings + schema derivation (`src/skills.js`)
-- [x] **Block 5** — replayer + `run_skill` + structured failures
-- [x] **Block 6** — schema review UI; a skill cannot run until approved
-- [~] **Block 7** — dynamic `registerTool` per approved skill, revoked via `AbortController`. Written and syntax-checked; **not yet exercised in a WebMCP-capable client**. Persistence uses `localStorage`, not IndexedDB — skills are small JSON and this survives reload just as well.
-- [x] **Block 8** — staged agent replay with pace control. Skipped the polyfill: it supplies the
-  API but not an agent, so it does not help a judge without a WebMCP client, and the app already
-  degrades correctly to a working manual triage app with the header reading `no WebMCP`.
-- [ ] **Block 9** — video, description, license
 
 ## Data
 
@@ -238,7 +223,7 @@ agent would have done.
 
 ## Not implemented
 
-Tracked honestly here as the build proceeds.
+Stated plainly rather than left for a reader to discover.
 
 - Recording individual-item actions. Only set-based commands are recorded, by
   design (D1) — an individual action would not generalise.
@@ -246,5 +231,6 @@ Tracked honestly here as the build proceeds.
   starting state is meaningless.
 - Nested field paths. Bindings address top-level payload fields only, which is
   all the current command set has.
-- The per-skill `registerTool` layer has not been verified against a live client
-  yet — see Block 0.
+- `AbortController` revocation, `readOnlyHint` behaviour, and the agent-side tool
+  ceiling were not conclusively measured against either client. They are marked open
+  in the table above rather than claimed.

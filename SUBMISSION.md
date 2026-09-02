@@ -1,14 +1,6 @@
-# Understudy — submission copy
+# Understudy
 
-Paste-ready text for the Devpost form. Live URL and repo are filled in; add `VIDEO_URL` once uploaded.
-
----
-
-## Tagline
-
-Do the task once. The page writes the tool. The agent does the other two hundred.
-
----
+**Do the task once. The page writes the tool. The agent does the other two hundred.**
 
 ## What it is
 
