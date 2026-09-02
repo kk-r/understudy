@@ -38,8 +38,8 @@ later matches the video. Topic yields: `google` 64, `apple` 32, `openai` 20,
 > product team is ever going to ship features for that long tail. Understudy lets the
 > user create the tools."
 
-**0:15–0:25 — Hand the recorder to the agent.** Type: *"I'm going to show you my
-triage routine. Start recording."* Show the tool call land and the Record state go live.
+**0:15–0:25 — Hand the recorder to the agent.** Type: *"I'm going to teach you my triage
+routine. Start recording."* Show the tool call land and the Teach state go live.
 
 > "I tell the agent to watch."
 

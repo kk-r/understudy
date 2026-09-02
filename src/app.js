@@ -154,11 +154,11 @@ $('rec-toggle').onclick = () => {
 
 function renderRec() {
   const on = skills.isRecording();
-  $('rec-toggle').textContent = on ? 'Stop' : 'Record';
+  $('rec-toggle').textContent = on ? 'Done' : 'Teach';
   $('rec-toggle').className = on ? '' : 'primary';
   $('rec-bar').className = on ? 'bar on' : 'bar';
   $('rec-state').innerHTML = on
-    ? `<span class="rec-dot"></span> recording &mdash; ${skills.recordedSoFar()} step(s). Do the routine, then Stop.`
+    ? `<span class="rec-dot"></span> teaching &mdash; ${skills.recordedSoFar()} step(s). Do the routine, then press Done.`
     : `<span class="muted">${bus.getLog().length} command(s) this session</span>`;
 }
 
@@ -169,7 +169,7 @@ function renderSkills() {
   const pending = skills.listUnlearnedRecordings();
   $('skill-count').textContent = list.length ? `(${list.length})` : '';
   if (list.length === 0 && pending.length === 0) {
-    $('skills').innerHTML = '<div class="empty-state">No skills yet.<br><br>Press <b>Record</b>, do a routine by hand, press <b>Stop</b>, then ask the agent to learn it.</div>';
+    $('skills').innerHTML = '<div class="empty-state">No skills yet.<br><br>Press <b>Teach</b>, do a routine by hand, press <b>Done</b>, then ask your agent to learn it.</div>';
     return;
   }
   $('skills').replaceChildren(...pending.map(renderRecordingCard), ...list.map(renderSkillCard));
@@ -186,7 +186,7 @@ function renderRecordingCard(rec) {
   const el = document.createElement('div');
   el.className = 'rec';
   el.innerHTML = `
-    <h3>Recorded demonstration &middot; ${rec.steps.length} step${rec.steps.length === 1 ? '' : 's'}</h3>
+    <h3>You taught &middot; ${rec.steps.length} step${rec.steps.length === 1 ? '' : 's'}</h3>
     <ol>${rec.steps.map((st) => `<li>${describe(st)}${st.affected ? ` <span class="muted">(${st.affected})</span>` : ''}</li>`).join('')}</ol>
     <div class="ask">Ask your agent: <b>&ldquo;Look at what I just did and turn it into a reusable skill.&rdquo;</b></div>
     <div class="row"><button data-make>Create it myself instead</button></div>`;

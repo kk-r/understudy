@@ -153,8 +153,8 @@ persist in `localStorage`.
 1. Open https://understudy-wine.vercel.app in ChatGPT desktop's built-in browser (GPT-5.6 Sol or Terra — Luna has WebMCP
    disabled), or Chrome 149+ with `chrome://flags/#enable-webmcp-testing`.
 2. Header should read `WebMCP: 6 tools`.
-3. Press **Record**, filter `title contains google` (63 matches), tag them, set priority, clear
-   filters, press **Stop**.
+3. Press **Teach**, filter `title contains google` (64 matches), tag them, set priority, clear
+   filters, press **Done**.
 4. Ask the agent: *"Look at what I just did and turn it into a reusable skill."*
 5. Review the parameters it chose. Promote one it missed. Approve.
 6. Ask it to run the skill for topics you never demonstrated — try `apple`, `openai`, `github`,

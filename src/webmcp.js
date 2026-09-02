@@ -23,21 +23,24 @@ export async function install(skills, onEvent = () => {}) {
     {
       name: 'start_recording',
       description:
-        'Begin recording the user\'s actions as a demonstration. The user then performs a routine by hand in the page. ' +
-        'Call stop_recording when they say they are done. Recordings are how new skills get created.',
+        'Begin capturing the user\'s actions as a demonstration -- they are teaching you a routine. ' +
+        'Call this when they say anything like "let me teach you", "watch what I do", or "start recording". ' +
+        'The page does the capturing; you see nothing until you call get_recording afterwards. ' +
+        'Call stop_recording when they say they are done. This is how new skills get created.',
       inputSchema: { type: 'object', properties: {}, required: [] },
       execute: async () => announce('start_recording', skills.startRecording()),
     },
     {
       name: 'stop_recording',
-      description: 'Stop the current recording and return its id and step count. Then call get_recording to see what was demonstrated.',
+      description: 'Stop capturing and return the demonstration id and step count. Call this when the user says they are done teaching. ' +
+        'Then call get_recording to see what they actually did.',
       inputSchema: { type: 'object', properties: {}, required: [] },
       execute: async () => announce('stop_recording', skills.stopRecording()),
     },
     {
       name: 'get_recording',
       description:
-        'Read back a demonstration: a plain-language list of what the user did, plus, for each step, the exact fields you may turn into parameters. ' +
+        'Read back what the user taught you: a plain-language list of what they did, plus, for each step, the exact fields you may turn into parameters. ' +
         'Use this to decide which values are parameters before calling save_skill. Defaults to the most recent recording.',
       inputSchema: { type: 'object', properties: { recordingId: str('Recording id. Omit for the most recent.') }, required: [] },
       annotations: { readOnlyHint: true },

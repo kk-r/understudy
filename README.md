@@ -179,6 +179,16 @@ falls back to the snapshot if the API is unreachable.
 High-yield topics in the snapshot, for anyone reproducing the demo: `google` (63),
 `apple` (32), `openai` (20), `github` (19), `firefox` (19).
 
+## Teaching, precisely
+
+The **page** captures the demonstration, not the agent. Nothing streams to the model
+while you work: you press Teach (or ask your agent to start), do the routine, press
+Done, and only then does the agent read a transcript via `get_recording`.
+
+That is a feature, not a shortcut. It costs no tokens while you demonstrate, it is
+deterministic, and it works identically whether the agent is idle, busy, or absent
+entirely — which is what makes the no-agent path below possible.
+
 ## Without a WebMCP client
 
 Turning a recording into a skill is the agent's job — it reads the demonstration and
