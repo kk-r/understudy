@@ -23,11 +23,13 @@ export function createSkills(bus) {
   let seq = 0;
 
   // Replay pacing. When an agent rewrites a workspace a human is watching, applying
-  // every step at once tells them nothing -- 250 rows change and the reason is lost.
+  // every step at once tells them nothing -- a thousand rows change and the reason is lost.
+  // Defaults to the slowest setting: the first time you see an agent operate your
+  // interface, legibility matters more than speed. Instant is one click away.
   // Steps are applied one at a time with the current step announced, so the human can
   // follow what was done on their behalf. 0 disables it. Total pacing is capped so a
   // long skill never stalls a tool call.
-  let paceMs = 600;
+  let paceMs = 1100;
   const PACE_BUDGET_MS = 4000;
   const progress = new Set();
 
