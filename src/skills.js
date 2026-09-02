@@ -7,7 +7,12 @@
 
 import { describePlain, bindablePaths } from './trace.js';
 
-const STORE = 'understudy.skills.v1';
+export const STORE = 'understudy.skills.v1';
+
+/** Wipe everything learned. Used by `?reset` and by Clear all. */
+export function clearStored() {
+  try { localStorage.removeItem(STORE); } catch (e) { console.warn('[understudy] clear failed', e); }
+}
 const ident = /^[a-z][a-z0-9_]{2,47}$/;
 
 export function createSkills(bus) {
@@ -210,6 +215,11 @@ export function createSkills(bus) {
     isRecording: () => !!active,
     activeId: () => active?.id ?? null,
     recordedSoFar: () => (active ? bus.getLog().length - active.startIndex : 0),
+    clearAll: () => {
+      skills.clear(); recordings.clear(); active = null;
+      clearStored(); notify();
+      return { ok: true };
+    },
     listSkills: () => [...skills.values()],
     /** Recordings no skill has been built from yet. */
     listUnlearnedRecordings: () => {

@@ -4,12 +4,21 @@ import {
   FILTER_FIELDS, SORT_FIELDS, PRIORITIES,
 } from './commands.js';
 import { describe } from './trace.js';
-import { createSkills } from './skills.js';
+import { createSkills, clearStored } from './skills.js';
 import { install, isAvailable } from './webmcp.js';
 import { echo } from './echo.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// ?reset wipes learned skills before anything loads. Repeated demo takes need a clean
+// slate, and there is no devtools console in an embedded browser to do it by hand.
+if (new URLSearchParams(location.search).has('reset')) {
+  clearStored();
+  const u = new URL(location.href);
+  u.searchParams.delete('reset');
+  history.replaceState(null, '', u.pathname + u.search);
+}
 
 const { items, source, live } = await loadItems();
 const bus = createBus(items);
@@ -201,7 +210,29 @@ function renderSkills() {
     $('skills').innerHTML = '<div class="empty-state">No skills yet.<br><br>Press <b>Teach</b>, do a routine by hand, press <b>Done</b>, then ask your agent to learn it.</div>';
     return;
   }
-  $('skills').replaceChildren(...pending.map(renderRecordingCard), ...list.map(renderSkillCard));
+  const children = [...pending.map(renderRecordingCard), ...list.map(renderSkillCard)];
+  if (list.length) children.push(renderClearAll());
+  $('skills').replaceChildren(...children);
+}
+
+/** Two-click wipe of everything learned, matching the per-skill delete. */
+function renderClearAll() {
+  const row = document.createElement('div');
+  row.className = 'row';
+  row.style.justifyContent = 'flex-end';
+  const btn = document.createElement('button');
+  btn.textContent = 'Clear all skills';
+  let t;
+  const disarm = () => { clearTimeout(t); if (btn.isConnected) { btn.dataset.armed = ''; btn.classList.remove('danger'); btn.textContent = 'Clear all skills'; } };
+  btn.onclick = () => {
+    if (btn.dataset.armed) { disarm(); skills.clearAll(); flash('All learned skills cleared.'); return; }
+    btn.dataset.armed = '1';
+    btn.classList.add('danger');
+    btn.textContent = 'Clear everything?';
+    t = setTimeout(disarm, 8000);
+  };
+  row.appendChild(btn);
+  return row;
 }
 
 /**

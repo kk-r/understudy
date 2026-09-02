@@ -195,6 +195,16 @@ of the category and let it enumerate them itself:
 
 Retail brands are not in a Hacker News corpus; pick a category the data actually has.
 
+## Clearing what it has learned
+
+Skills persist in `localStorage`, so they survive a reload. To start over:
+
+- **`?reset`** — append it to the URL. Wipes every learned skill and recording before the
+  page loads, then strips itself from the address bar. This is the one to use for repeated
+  demo runs; embedded browsers have no devtools console to clear storage by hand.
+- **Clear all skills** — at the foot of the Skills panel. Two clicks, same as Delete.
+- **Delete** — on an individual skill card.
+
 ## Teaching, precisely
 
 The **page** captures the demonstration, not the agent. Nothing streams to the model
