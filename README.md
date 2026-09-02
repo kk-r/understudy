@@ -65,7 +65,11 @@ Every command returns how many items it actually affected, and a step that match
 nothing returns a structured reason rather than a silent success. The agent replans
 instead of reporting a job well done.
 
-## Running it
+## Live
+
+**https://understudy-wine.vercel.app** — and the client probe at **https://understudy-wine.vercel.app/spike.html**
+
+## Running it locally
 
 No build step, no dependencies. Plain ES modules.
 

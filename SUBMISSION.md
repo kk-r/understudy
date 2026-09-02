@@ -1,6 +1,6 @@
 # Understudy — submission copy
 
-Paste-ready text for the Devpost form. Replace `LIVE_URL`, `REPO_URL`, `VIDEO_URL`.
+Paste-ready text for the Devpost form. Replace `https://understudy-wine.vercel.app`, `https://github.com/kk-r/understudy`, `VIDEO_URL`.
 
 ---
 
@@ -150,7 +150,7 @@ persist in `localStorage`.
 
 ## Try it
 
-1. Open LIVE_URL in ChatGPT desktop's built-in browser (GPT-5.6 Sol or Terra — Luna has WebMCP
+1. Open https://understudy-wine.vercel.app in ChatGPT desktop's built-in browser (GPT-5.6 Sol or Terra — Luna has WebMCP
    disabled), or Chrome 149+ with `chrome://flags/#enable-webmcp-testing`.
 2. Header should read `WebMCP: 6 tools`.
 3. Press **Record**, filter `title contains google` (63 matches), tag them, set priority, clear
