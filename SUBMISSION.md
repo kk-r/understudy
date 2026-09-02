@@ -122,7 +122,7 @@ someone is watching, applying every step at once teaches them nothing — 250 ro
 reason is lost. Skill replay applies one step at a time, announcing each in the app's own words
 with a progress track, while the trace panel grows an entry at a time. The human's own clicks
 stay instant; only replay is paced, and it is capped at four seconds total so a long skill never
-stalls a tool call. Speed is a control in the UI, including Instant.
+stalls a tool call.
 
 **The controls show the agent's work.** Replay dispatches commands, not clicks — but each step
 is echoed back through the control it corresponds to, typing the filter value in character by

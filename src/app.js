@@ -367,8 +367,9 @@ for (const [tab, pane] of [['tab-trace', 'pane-trace'], ['tab-skills', 'pane-ski
 
 // --- agent replay ---------------------------------------------------------
 
-$('pace').value = String(skills.getPace());
-$('pace').onchange = () => skills.setPace(+$('pace').value);
+// Replay pace is fixed (see skills.js). No UI: a speed control next to a live agent
+// run reads as a setting you are supposed to think about, and it isn't.
+// window.understudy.skills.setPace(0) from the console if you ever need it instant.
 
 let runClear;
 skills.onProgress(async ({ skill, step, total, did, running, failed, command, budgetMs }) => {

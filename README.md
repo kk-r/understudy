@@ -46,8 +46,9 @@ registration.
 An agent rewriting a workspace a human is watching should not apply everything at once — the
 human learns nothing from 250 rows changing simultaneously. Skill replay applies one step at a
 time and announces each one; the human's own clicks go straight through `dispatch` and stay
-instant. Pacing is capped at four seconds in total so a long skill never stalls a tool call,
-and Instant is available in the UI.
+instant. Pacing is capped at four seconds in total so a long skill never stalls a tool call.
+There is no speed control in the interface: a dropdown beside a live agent run reads as
+a setting you are meant to think about, and it isn't one.
 
 **D4b — The controls echo the command.**
 Replay dispatches to the bus, so without help the workspace changes while the controls sit
