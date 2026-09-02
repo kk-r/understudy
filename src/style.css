@@ -141,3 +141,7 @@ header .stat a { color:var(--accent); }
 .rec ol code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--hi); color:var(--hi-fg); padding:0 4px; border-radius:3px; }
 .rec .ask { font-size:12px; color:var(--mut); margin-bottom:8px; }
 .rec .ask b { color:var(--fg); }
+
+.ask-inline { display:inline-flex; gap:4px; align-items:center; }
+.ask-inline input { font-size:12px; padding:3px 6px; }
+.ask-inline button { padding:3px 8px; font-size:12px; }

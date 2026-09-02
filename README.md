@@ -142,6 +142,11 @@ the tool. A revoked skill may linger in an agent's stale snapshot; `runSkill`
 re-checks `approved` on every call, so a call that arrives through a stale entry is
 still refused.
 
+**Native dialogs do not work in ChatGPT's in-app browser.** `prompt()`, `confirm()` and
+`alert()` are silently no-ops, as they are in most embedded browsers — a control that
+depends on one just does nothing, with no error. Understudy asks for every value inline
+in the page instead. Worth knowing before you build a WebMCP app around a dialog.
+
 The `toolchange` divergence is not documented by either vendor. Understudy does not
 depend on the event — see D3 — which is why the static dispatcher exists.
 

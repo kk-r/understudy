@@ -162,6 +162,35 @@ function renderRec() {
     : `<span class="muted">${bus.getLog().length} command(s) this session</span>`;
 }
 
+/**
+ * Ask for a value inline, in place of `anchor`.
+ *
+ * Native prompt()/confirm() are unusable here: embedded browsers -- ChatGPT's in-app
+ * browser among them -- silently no-op them, so a dialog-driven control just does
+ * nothing. Everything the user has to type is asked for in the page itself.
+ */
+function ask(anchor, { label, value = '', size = 14 }) {
+  return new Promise((resolve) => {
+    const form = document.createElement('span');
+    form.className = 'ask-inline';
+    form.innerHTML = `<input size="${size}" placeholder="${esc(label)}" aria-label="${esc(label)}">` +
+                     `<button class="primary">OK</button><button>Cancel</button>`;
+    const input = form.querySelector('input');
+    const [okBtn, cancelBtn] = form.querySelectorAll('button');
+    const done = (v) => { if (form.isConnected) form.replaceWith(anchor); resolve(v); };
+    okBtn.onclick = () => done(input.value.trim() || null);
+    cancelBtn.onclick = () => done(null);
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); done(input.value.trim() || null); }
+      if (e.key === 'Escape') { e.preventDefault(); done(null); }
+    };
+    anchor.replaceWith(form);
+    input.value = value;
+    input.focus();
+    input.select();
+  });
+}
+
 // --- skills panel ---------------------------------------------------------
 
 function renderSkills() {
@@ -190,8 +219,9 @@ function renderRecordingCard(rec) {
     <ol>${rec.steps.map((st) => `<li>${describe(st)}${st.affected ? ` <span class="muted">(${st.affected})</span>` : ''}</li>`).join('')}</ol>
     <div class="ask">Ask your agent: <b>&ldquo;Look at what I just did and turn it into a reusable skill.&rdquo;</b></div>
     <div class="row"><button data-make>Create it myself instead</button></div>`;
-  el.querySelector('[data-make]').onclick = () => {
-    const name = prompt('Skill name (lowercase letters, digits, underscores)', 'my_routine');
+  el.querySelector('[data-make]').onclick = async (ev) => {
+    const btn = ev.currentTarget;
+    const name = await ask(btn, { label: 'skill name', value: 'my_routine', size: 18 });
     if (!name) return;
     const res = skills.saveSkill({
       recordingId: rec.id, name,
@@ -243,8 +273,8 @@ function renderSkillCard(skill) {
       const b = document.createElement('button');
       b.innerHTML = `+ ${esc(c.fieldPath)}=<code>${esc(c.value)}</code>`;
       b.title = `step ${c.stepIndex}: make this a parameter`;
-      b.onclick = () => {
-        const name = prompt(`Parameter name for step ${c.stepIndex} "${c.fieldPath}" (currently "${c.value}")`, c.fieldPath);
+      b.onclick = async () => {
+        const name = await ask(b, { label: 'parameter name', value: c.fieldPath });
         if (!name) return;
         const res = skills.updateParams(skill.name, [...skill.params, {
           name, stepIndex: c.stepIndex, fieldPath: c.fieldPath,
@@ -262,7 +292,13 @@ function renderSkillCard(skill) {
   });
   el.querySelector('[data-act="approve"]')?.addEventListener('click', () => skills.approveSkill(skill.name, true));
   el.querySelector('[data-act="revoke"]')?.addEventListener('click', () => skills.approveSkill(skill.name, false));
-  el.querySelector('[data-act="delete"]').onclick = () => { if (confirm(`Delete skill "${skill.name}"?`)) skills.deleteSkill(skill.name); };
+  const del = el.querySelector('[data-act="delete"]');
+  del.onclick = () => {
+    if (del.dataset.armed) { skills.deleteSkill(skill.name); return; }
+    del.dataset.armed = '1';
+    del.textContent = 'Sure?';
+    setTimeout(() => { if (del.isConnected) { delete del.dataset.armed; del.textContent = 'Delete'; } }, 3000);
+  };
   return el;
 }
 
