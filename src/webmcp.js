@@ -109,6 +109,9 @@ export async function install(skills, onEvent = () => {}) {
       name: 'run_skill',
       description:
         'Run a learned skill. Returns what actually happened at each step, including how many items were affected. ' +
+        'Call it as many times as the task needs, with different arguments each time -- the user teaches a routine once on one example, ' +
+        'and it is your job to supply the remaining cases from what you know. If asked to apply a skill to a category ' +
+        '("every major browser", "the other big tech companies"), enumerate the members yourself and run the skill once per member. ' +
         'If a step matches nothing it fails with the reason and tells you which earlier steps already applied -- read that and adjust rather than retrying blindly.',
       inputSchema: {
         type: 'object',

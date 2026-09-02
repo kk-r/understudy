@@ -48,13 +48,25 @@ premise of the spec, and a server-side MCP has no access to either half.
 
 ## What humans and agents can now do together that was hard before
 
-Teaching an agent your workflow currently means writing a prompt describing it. Prompts are
-lossy, unverifiable, and have to be rewritten every time. **A demonstration is exact.**
+**The page supplies the verb. The agent supplies the nouns.**
 
-And the correction loop runs the other way too. When the agent decides that "high" should
-stay hardcoded and you think priority should be a parameter, you promote it with one click
-and the skill's schema changes underneath it. The agent proposes; the human is the authority
-on intent. Neither could produce the finished tool alone.
+Teach it once on a single example — filter for `amazon`, tag them `big-tech`, set priority
+high. Fourteen items. Then say: *"now do the same for every other big tech company."* The
+agent enumerates Google, Apple, Microsoft, Meta, Facebook, Twitter, Netflix and Tesla from
+its own world knowledge, and runs your tool once per company. **Fourteen items taught, a
+hundred and forty-five more from knowledge the page never had.**
+
+Neither half can do this alone. The page has no idea what a big tech company is. The agent
+has no reliable way to operate your interface — that is the whole reason WebMCP exists. What
+makes the pair work is that the human contributes a third thing: the routine itself,
+demonstrated rather than described.
+
+And the correction runs the other way too. When the agent leaves `high` hardcoded and you
+think priority should be a parameter, you promote it with one click and the schema changes
+underneath it. The agent proposes; the human is the authority on intent.
+
+Teaching an agent a workflow otherwise means writing a prompt describing it. Prompts are
+lossy, unverifiable, and rewritten every time. **A demonstration is exact.**
 
 ## How it improves the experience
 

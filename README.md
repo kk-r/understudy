@@ -181,8 +181,19 @@ a walkthrough would match nothing by the time someone tried it. Stable data mean
 you see is what the walkthrough showed. `?live=1` fetches the real feed instead, and
 falls back to the snapshot if the API is unreachable.
 
-High-yield topics in the snapshot, for anyone reproducing the demo: `google` (63),
-`apple` (32), `openai` (20), `github` (19), `firefox` (19).
+High-yield topics for anyone reproducing the demo: `google` (64), `apple` (33),
+`firefox` (19), `openai` (20), `github` (19).
+
+Two categories have complete coverage, which is what makes the knowledge-composition
+demo work — teach the skill on one member, then ask the agent to apply it to the rest
+of the category and let it enumerate them itself:
+
+- **Big tech** — google 64, apple 33, facebook 16, amazon 14, microsoft 12, twitter 10,
+  meta 6, tesla 3, netflix 1 (159 items across 9 companies)
+- **Social platforms** — facebook 16, youtube 16, twitter 10, reddit 5, tiktok 4,
+  instagram 3 (54 items across 6)
+
+Retail brands are not in a Hacker News corpus; pick a category the data actually has.
 
 ## Teaching, precisely
 
