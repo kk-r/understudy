@@ -38,7 +38,9 @@ header .spacer { flex:1; }
 header .stat { font-size:12px; color:var(--mut); font-variant-numeric:tabular-nums; }
 header .stat b { color:var(--fg); font-weight:600; }
 
-main { display:grid; grid-template-columns:1fr 340px; overflow:hidden; }
+main { display:grid; grid-template-columns:1fr; overflow:hidden; }
+body.panel-open main { grid-template-columns:1fr 340px; }
+body:not(.panel-open) aside { display:none; }
 @media (max-width:900px) { main { grid-template-columns:1fr; } aside { display:none; } }
 
 #work { display:grid; grid-template-rows:auto auto 1fr; overflow:hidden; }
@@ -158,8 +160,13 @@ button.danger { border-color:var(--bad) !important; background:var(--bad) !impor
   background:var(--bad); color:#fff;
   font-size:11px; font-weight:700; letter-spacing:.06em;
 }
+#teaching-pill[hidden] { display:none; }
 #teaching-pill .rec-dot { background:#fff; }
 body.teaching { box-shadow:inset 0 0 0 3px var(--bad); }
 /* pending approval wants to be unmissable, including from the other tab */
 #skill-count.pending { color:var(--warn); font-weight:700; }
 button.tab.nudge { box-shadow:0 0 0 2px var(--warn); }
+
+#panel-toggle { position:relative; }
+#panel-toggle.has-news { border-color:var(--warn); color:var(--warn); font-weight:600; }
+body.panel-open #panel-toggle { border-color:var(--accent); color:var(--accent); }

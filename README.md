@@ -196,6 +196,15 @@ of the category and let it enumerate them itself:
 
 Retail brands are not in a Hacker News corpus; pick a category the data actually has.
 
+## The side panel
+
+Collapsed by default — the workspace is the product, the panel is what you consult.
+**Panel** in the header toggles it.
+
+It opens itself whenever there is something in it worth seeing: a demonstration being
+captured, a skill waiting for approval, an agent mid-run. Nothing important happens
+behind a closed door, which is what makes collapsing it safe rather than merely tidy.
+
 ## Clearing what it has learned
 
 Skills persist in `localStorage`, so they survive a reload. To start over:

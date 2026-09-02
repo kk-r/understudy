@@ -165,6 +165,7 @@ function renderRec() {
   const on = skills.isRecording();
   document.body.classList.toggle('teaching', on);
   $('teaching-pill').hidden = !on;
+  if (on) surface('tab-trace');   // watch the commands land as you demonstrate
   $('rec-toggle').textContent = on ? 'Done' : 'Teach';
   $('rec-toggle').className = on ? '' : 'primary';
   $('rec-bar').className = on ? 'bar on' : 'bar';
@@ -359,6 +360,27 @@ function renderSkillCard(skill) {
   return el;
 }
 
+// --- side panel -----------------------------------------------------------
+
+// Collapsed by default: the workspace is the product, and the panel is what you
+// consult. It opens itself whenever there is something in it worth seeing --
+// a demonstration being captured, a skill awaiting approval, an agent mid-run --
+// so nothing important happens behind a closed door.
+const panelOpen = () => document.body.classList.contains('panel-open');
+function setPanel(open) {
+  document.body.classList.toggle('panel-open', open);
+  $('panel-toggle').textContent = open ? 'Hide panel' : 'Panel';
+  if (open) $('panel-toggle').classList.remove('has-news');
+}
+$('panel-toggle').onclick = () => setPanel(!panelOpen());
+
+/** Open the panel, or flag the toggle if the user deliberately closed it just now. */
+function surface(tab) {
+  if (tab) showTab(tab);
+  if (panelOpen()) return;
+  setPanel(true);
+}
+
 // --- tabs -----------------------------------------------------------------
 
 const TABS = [['tab-trace', 'pane-trace'], ['tab-skills', 'pane-skills']];
@@ -374,10 +396,13 @@ for (const [tab] of TABS) $(tab).onclick = () => showTab(tab);
 // A skill the agent just wrote lands in a panel you may not be looking at, so the
 // agent announces success and the screen does nothing. Surface it instead.
 let lastAwaiting = 0;
+let lastRecordings = 0;
 skills.subscribe(() => {
   const awaiting = skills.listSkills().filter((s) => !s.approved).length;
-  if (awaiting > lastAwaiting) showTab('tab-skills');
+  const recordings = skills.listUnlearnedRecordings().length;
+  if (awaiting > lastAwaiting || recordings > lastRecordings) surface('tab-skills');
   lastAwaiting = awaiting;
+  lastRecordings = recordings;
 });
 
 // --- agent replay ---------------------------------------------------------
@@ -396,6 +421,7 @@ skills.onProgress(async ({ skill, step, total, did, running, failed, command, bu
     ${did ? `<div class="doing">${describe({ type: 'NOOP' }) && ''}${esc(did)}</div>` : ''}
     <div class="track">${Array.from({ length: total }, (_, i) =>
       `<i class="${i < step ? 'done' : i === step ? (running ? 'now' : 'done') : ''}"></i>`).join('')}</div>`;
+  surface();
   $('list').classList.remove('agent-touched');
   void $('list').offsetWidth;
   $('list').classList.add('agent-touched');
