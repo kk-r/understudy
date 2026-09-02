@@ -23,6 +23,10 @@ did not exist ninety seconds earlier. The agent then runs it across two hundred 
 
 The tool surface stops being something the developer ships and becomes something the user grows.
 
+Concretely: teaching an agent a routine used to mean describing it in a prompt and hoping.
+Here you do the job once — four actions, about fifteen seconds — and the agent turns that into
+a parameterised tool it can run across 1000 items, in a schema you can correct before it runs.
+
 ## Why this use case suits WebMCP
 
 Every WebMCP implementation I could find — Chrome's fifteen demos, OpenAI's ten showcase
