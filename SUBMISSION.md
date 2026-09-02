@@ -1,6 +1,6 @@
 # Understudy — submission copy
 
-Paste-ready text for the Devpost form. Replace `https://understudy-wine.vercel.app`, `https://github.com/kk-r/understudy`, `VIDEO_URL`.
+Paste-ready text for the Devpost form. Live URL and repo are filled in; add `VIDEO_URL` once uploaded.
 
 ---
 
