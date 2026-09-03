@@ -3,3 +3,6 @@
 node_modules/
 VIDEO.md
 SUBMISSION.md
+voiceover/
+*.mov
+*.mp4

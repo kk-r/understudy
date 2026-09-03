@@ -7,7 +7,11 @@ developer imagined, Understudy lets the user demonstrate a routine by hand — a
 the agent turns that demonstration into a named, parameterised, reusable tool that
 it registers into the live page at runtime.
 
-Status: **work in progress.** See "Build sequence" below for what is done.
+Status: **work in progress.** "Not implemented" at the bottom lists what is missing.
+
+![Understudy replaying a learned skill once per company](demo-loop.gif)
+
+*The agent running a skill it learned two minutes earlier, once per company it named itself. Full 2:35 walkthrough with narration: https://youtu.be/kaPOE1YeB1c*
 
 ## Try it
 
@@ -39,6 +43,10 @@ the product: the tool surface stops being something the developer ships and beco
 something the user grows.
 
 ## Six design decisions
+
+<details>
+<summary><b>Read the six decisions</b> — the command bus, matching-set commands, the static dispatcher, and why approval is enforced at execute time</summary>
+
 
 **D1 — Commands operate on sets, not on items.**
 `SELECT_ITEMS {ids:[3,7,12]}` cannot generalise. `SET_FILTER {contains:"diffusion"}`
@@ -84,7 +92,22 @@ Driving the actual DOM controls instead would recouple replay to the DOM, which 
 the brittleness the command bus exists to avoid. The command stays the source of truth; the UI
 just shows its work.
 
+</details>
+
 ## What I measured about the two clients
+
+Three divergences that will bite anyone building on WebMCP today, none of them documented
+by either vendor:
+
+| | Chrome 149+ | ChatGPT desktop (5.6 Sol) |
+|---|---|---|
+| `toolchange` event | fires on runtime registration | **absent** — `modelContext` is not an EventTarget |
+| Tool registered mid-turn | — | callable, but **the first call fails against a stale snapshot** (~14s to recover) |
+| `prompt` / `confirm` / `alert` | — | **silent no-ops** |
+
+<details>
+<summary><b>Full probe results, the stale-snapshot finding, and what it changed in the build</b></summary>
+
 
 `spike.html` probes six unknowns that neither Chrome's nor OpenAI's documentation
 answers. Run it in both clients before relying on any of this.
@@ -139,6 +162,8 @@ page is not evidence: the spike therefore generates tool names per load, keeps t
 out of the DOM entirely (devtools console only), and has every tool mint a one-time
 token at execute time. A reported token that matches the log is the only proof a
 call happened.
+
+</details>
 
 ## Using it
 
