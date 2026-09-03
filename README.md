@@ -7,7 +7,7 @@ developer imagined, Understudy lets the user demonstrate a routine by hand — a
 the agent turns that demonstration into a named, parameterised, reusable tool that
 it registers into the live page at runtime.
 
-Status: **work in progress.** "Not implemented" at the bottom lists what is missing.
+The scope is deliberate. **"Not implemented"** at the bottom says what is missing and why.
 
 ![Understudy replaying a learned skill once per company](demo-loop.gif)
 
