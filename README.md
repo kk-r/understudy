@@ -11,11 +11,11 @@ The scope is deliberate. **"Not implemented"** at the bottom says what is missin
 
 ![Understudy replaying a learned skill once per company](demo-loop.gif)
 
-*The agent running a skill it learned two minutes earlier, once per company it named itself. Full 2:35 walkthrough with narration: https://youtu.be/kaPOE1YeB1c*
+*The agent running a skill it learned two minutes earlier, once per company it named itself. Full 2:35 walkthrough with narration: <a href="https://youtu.be/kaPOE1YeB1c" target="_blank" rel="noopener">https://youtu.be/kaPOE1YeB1c</a>*
 
 ## Try it
 
-**<https://understudy-wine.vercel.app>**
+**<a href="https://understudy-wine.vercel.app" target="_blank" rel="noopener">https://understudy-wine.vercel.app</a>**
 
 Open it in ChatGPT desktop's built-in browser (GPT-5.6 Sol or Terra — Luna has WebMCP
 disabled), or Chrome 149+ with `chrome://flags/#enable-webmcp-testing`. The header should
@@ -29,7 +29,7 @@ read `WebMCP: 6 tools`.
    itself and runs your tool once per company.
 
 The client probe that produced the findings below is at
-<https://understudy-wine.vercel.app/spike.html>.
+<a href="https://understudy-wine.vercel.app/spike.html" target="_blank" rel="noopener">https://understudy-wine.vercel.app/spike.html</a>.
 
 ## Why this needs WebMCP
 
@@ -210,7 +210,7 @@ No build step, no dependencies. Plain ES modules.
 python3 -m http.server 8777
 ```
 
-Then open <http://localhost:8777/>.
+Then open <a href="http://localhost:8777/" target="_blank" rel="noopener">http://localhost:8777/</a>.
 
 To exercise the WebMCP tools you need one of:
 
